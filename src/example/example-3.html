@@ -1,1 +1,57 @@
 <!-- 计算属性 & 监听属性 -->
+<!-- 计算属性可以封装一些复杂的属性操作,也可以改变数据 -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app">
+    <input type="text" v-model="site">
+    <p>site:{{ site }}</p>
+    <p>name:{{ name }}</p>
+    <p>url:{{ url }}</p>
+  </div>
+</body>
+
+</html>
+
+<script>
+  var vm = new Vue({
+    el: '#app',
+    data: {
+      name: "gaojy",
+      url: 'www.gaojiayi.com'
+    },
+    //计算属性可以封装一些复杂的属性操作,也可以改变数据 -->
+    computed: {
+      site: {
+        // 不要使用箭头函数  这个this指定windows对象
+        // get:()=>{
+        //   return this.name+"====="+this.url;
+        // },
+        get: function () {
+          return this.name + "=====" + this.url;
+        },
+        set: function (val) {
+          this.name = val.split('=====')[0];
+          this.url = val.split('=====')[1];
+
+        }
+      }
+    },
+    // 可以监听属性的改变
+    watch: {
+      site:function(val){
+        console.log(val);
+      }
+    },
+
+  })
+</script>

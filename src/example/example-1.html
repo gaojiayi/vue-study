@@ -17,6 +17,10 @@
         <!-- v-html输出html -->
         <div v-html="html_contxt"></div>
 
+        <!-- 这边介绍下v-model 用于表单双向数据绑定，建立mvvm模型
+          <input v-model.number="age" type="number">   转化成数字
+          <input v-model.trim="msg">   去掉空格
+        -->
         <label for="r1">修改颜色</label><input type="checkbox" v-model="use" id="r1">
         <br>
         <!-- 绑定属性 可缩写 :href  -->
