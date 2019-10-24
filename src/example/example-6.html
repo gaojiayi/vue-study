@@ -1,0 +1,128 @@
+<!-- 自定义事件 -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+  <title>自定义组件</title>
+</head>
+
+<body>
+  <div id="counter-event-example">
+    <p>{{ total }}</p>
+    <!-- 使用v-on监听子组件释放的increment事件 -->
+    <button-counter v-on:increment="incrementTotal"></button-counter>
+    <!-- 给组件绑定原生事件.native -->
+    <button-counter v-on:click.native="console.log('eewew')"></button-counter>
+
+
+    <br>
+    <h1>表单输入组件</h1>
+    <custom-input v-model="something"></custom-input>
+    <br />
+    {{something}}
+
+    <!-- v-model可以看做=>
+    :value=something     @input="something => $event.target.value" -->
+
+
+    <br>
+    <h1>非父子组件的通信 点击a组件 触发b组件事件，通过一个总线</h1>
+    <comp-a v-on:id-selected="getdate"></comp-a>
+    <comp-b></comp-b>
+
+  </div>
+
+
+
+
+
+
+</body>
+
+</html>
+
+<script>
+  Vue.component('button-counter', {
+    template: '<button v-on:click="incrementCounter">{{ counter }}</button>',
+    data: function () {
+      return {
+        counter: 0
+      }
+    },
+    methods: {
+      incrementCounter: function () {
+        this.counter += 1
+        // 触发组件监听了increment的事件
+        this.$emit('increment')
+      }
+    },
+  })
+  // ------------------------------------------------------
+
+  Vue.component('custom-input', {
+    props: ['value'],
+    template: '<input type="text"  :value="this.value" v-on:input="updateValue($event.target.value)"/>',
+    methods: {
+      updateValue: function (value) {
+        this.$emit('input', value)
+      }
+    }
+
+  })
+
+  // -------------------------------------
+  // 作为事件总线，完成组件之间通信
+  var bus = new Vue();
+
+  Vue.component('comp-a', {
+    template: '<button class="compa" @click="comfuna">组件A</button>',
+    data: function () {
+      return {
+
+      }
+    },
+    methods: {
+      comfuna() {
+        // 触发监听总线中的事件
+        bus.$emit('id-selected', 1);
+        this.$emit('id-selected', 1);
+      }
+    }
+  })
+  Vue.component('comp-b', {
+    template: '<div class="compb">组件B</div>',
+    data: function () {
+      return {
+
+      }
+    },
+    mounted() {
+      // 在组件 B 创建的钩子中监听事件 ！！！！！！！！！！！！！
+      bus.$on('id-selected', function (id) {
+        console.log('在B组件中得到的值：' + id);
+      })
+    }
+
+  })
+
+
+  new Vue({
+    el: '#counter-event-example',
+    data: {
+      total: 0,
+      something: 'init data'
+    },
+    methods: {
+      incrementTotal: function () {
+        this.total += 1
+      },
+      getdate(value) {
+        console.log('得到当前的值：' + value);
+      }
+    }
+  })
+</script>
