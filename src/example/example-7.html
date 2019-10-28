@@ -1,6 +1,7 @@
 <!-- 使用插槽slot分发内容 -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,15 +9,50 @@
   <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
   <title>Document</title>
 </head>
-<body>
 
+<body>
+  <div id="app">
+    <h1>我是父组件的标题</h1>
+    <my-component>
+      <h1 slot="testSlot">具名插槽测试</h1>
+      <p>这是一些初始内容</p>
+      <p>这是更多的初始内容</p>
+    </my-component>
+
+    <child-component>
+      <!-- 作用域插槽  实现子获取组件内插槽属性值  -->
+      <template v-slot:todo="slotProps">
+        {{slotProps.user.firstName}}
+      </template>
+    </child-component>
+
+    <!-- 通过使用保留的 <component> 元素，并对其 is 特性进行动态绑定，你可以在同一个挂载点动态切换多个组件 -->
+    <!-- 异步组件  对低开销的静态组件使用 v-once .....省略 -->
+  </div>
 </body>
+
 </html>
 
 <script>
-// 事件修饰符
+  Vue.component('my-component', {
+    template: '<div><h2>我是子组件的标题</h2><slot name="testSlot"></slot><slot>只有在没有要分发的内容时才会显示。</div>'
 
-// 鼠标修饰符
+  })
 
-// 键盘修饰符
+  Vue.component('child-component', {
+    template: '<div><slot  name="todo" :user="user" :test="test">{{ user.lastName }}</slot></div>',
+    data: function () {
+      return {
+        text: "作用域插槽测试",
+        user: {
+          lastName: "Zhang",
+          firstName: "yue"
+        }
+      }
+    }
+  })
+
+  new Vue({
+    el: "#app"
+  })
 </script>
